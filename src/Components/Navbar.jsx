@@ -10,10 +10,10 @@ const DashboardIcon = ({ className }) => (
         xmlns="http://www.w3.org/2000/svg"
         className={className}
     >
-        <path d="M13.5 4.5L6 4.5C5.17157 4.5 4.5 5.17157 4.5 6L4.5 16.5C4.5 17.3284 5.17157 18 6 18L13.5 18C14.3284 18 15 17.3284 15 16.5L15 6C15 5.17157 14.3284 4.5 13.5 4.5Z" stroke="currentColor" strokeOpacity="1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M30 4.5L22.5 4.5C21.6716 4.5 21 5.17157 21 6L21 10.5C21 11.3284 21.6716 12 22.5 12L30 12C30.8284 12 31.5 11.3284 31.5 10.5L31.5 6C31.5 5.17157 30.8284 4.5 30 4.5Z" stroke="currentColor" strokeOpacity="1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M30 18L22.5 18C21.6716 18 21 18.6716 21 19.5L21 30C21 30.8284 21.6716 31.5 22.5 31.5L30 31.5C30.8284 31.5 31.5 30.8284 31.5 30L31.5 19.5C31.5 18.6716 30.8284 18 30 18Z" stroke="currentColor" strokeOpacity="1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M13.5 24.3L6 24.3C5.17157 24.3 4.5 24.9716 4.5 25.8L4.5 30.3C4.5 31.1285 5.17157 31.8 6 31.8L13.5 31.8C14.3284 31.8 15 31.1285 15 30.3L15 25.8C15 24.9716 14.3284 24.3 13.5 24.3Z" stroke="currentColor" strokeOpacity="1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M13.5 4.5L6 4.5C5.17157 4.5 4.5 5.17157 4.5 6L4.5 16.5C4.5 17.3284 5.17157 18 6 18L13.5 18C14.3284 18 15 17.3284 15 16.5L15 6C15 5.17157 14.3284 4.5 13.5 4.5Z" stroke="currentColor" strokeOpacity="1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M30 4.5L22.5 4.5C21.6716 4.5 21 5.17157 21 6L21 10.5C21 11.3284 21.6716 12 22.5 12L30 12C30.8284 12 31.5 11.3284 31.5 10.5L31.5 6C31.5 5.17157 30.8284 4.5 30 4.5Z" stroke="currentColor" strokeOpacity="1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M30 18L22.5 18C21.6716 18 21 18.6716 21 19.5L21 30C21 30.8284 21.6716 31.5 22.5 31.5L30 31.5C30.8284 31.5 31.5 30.8284 31.5 30L31.5 19.5C31.5 18.6716 30.8284 18 30 18Z" stroke="currentColor" strokeOpacity="1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M13.5 24.3L6 24.3C5.17157 24.3 4.5 24.9716 4.5 25.8L4.5 30.3C4.5 31.1285 5.17157 31.8 6 31.8L13.5 31.8C14.3284 31.8 15 31.1285 15 30.3L15 25.8C15 24.9716 14.3284 24.3 13.5 24.3Z" stroke="currentColor" strokeOpacity="1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
