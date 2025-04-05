@@ -3,9 +3,9 @@ import Row from './Row'
 const Table = () => {
 
     return (
-    <div className="flex flex-col mx-2 border-1 border-gray-300 rounded-md bg-tan">
+    <div className="flex flex-col mx-4 mt-2 border-1 border-gray-300 rounded-md">
         {/* Header */}
-        <div className="flex justify-between mx-2 py-2 bg-tan">
+        <div className="flex justify-between py-2 bg-gray-300">
             <p className="w-[200px] text-center font-semibold"> Crop </p>
             <p className="w-[200px] text-center font-semibold"> Storage Type </p>
             <p className="w-[200px] text-center font-semibold"> Health Status </p>
@@ -27,8 +27,8 @@ const Table = () => {
         
         <Row crop="Grapes"
              storageType="Bin" 
-             isHealthy={true}
-             amount={1000}
+             isHealthy={false}
+             amount={504}
              harvestDate="1/12/2025"
              sellByDate="6/1/2025"
              lastUpdateDate="3/4/2025"/>
