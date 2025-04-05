@@ -5,7 +5,7 @@ import { GiHealthNormal } from "react-icons/gi";
 const Row = ({crop, storageType, isHealthy, amount, harvestDate, sellByDate, lastUpdateDate}) => {
 
     return (
-        <div className="flex justify-between border-t-1 border-gray-300 py-2">
+        <div className="flex justify-between border-t-1 border-gray-300 py-2 hover:bg-tan">
             <p className="w-[200px] text-center"> 
                 {crop} 
             </p>
