@@ -134,7 +134,7 @@ const Dashboard = () => {
         </>
         )}
 
-        {loadingRecs ? (
+        {/* {loadingRecs ? (
           <p className="text-gray-500">Loading crop recommendations...</p>
         ) : (
           recommendations.map((item, index) => (
@@ -158,7 +158,7 @@ const Dashboard = () => {
               </p>
             </div>
           ))
-        )}
+        )} */}
       </div>
         <ControlPanel selected={selected} setSelected={setSelected} />
         <Table setIsOpen={setIsOpen}/>
