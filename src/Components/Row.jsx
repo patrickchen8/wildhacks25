@@ -14,6 +14,8 @@ const Row = ({
   revenue,
   lastUpdateDate,
   setIsOpen,
+  setCropId,
+  cropId
 }) => {
   let healthyCol;
   if (isHealthy === "processing") {
@@ -39,10 +41,15 @@ const Row = ({
     );
   }
 
+  const handleClick = () => {
+    setIsOpen(true)
+    setCropId(cropId)
+  }
+
   return (
     <div
       className="flex justify-between border-t-1 border-gray-300 py-2 bg-white cursor-pointer hover:bg-tan"
-      onClick={() => setIsOpen(true)}
+      onClick={handleClick}
     >
       <p className="w-[150px] text-center">{crop}</p>
       <div className="w-[150px] text-center">{storageType}</div>

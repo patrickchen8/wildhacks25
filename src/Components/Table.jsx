@@ -3,7 +3,7 @@ import { useDbData } from '../utilities/firebase';
 import { userContext } from '../App'
 import { useContext } from 'react'
 
-const Table = ({ setIsOpen, recommendations = [] }) => {
+const Table = ({ setIsOpen, setCropId, recommendations = [] }) => {
   const user = useContext(userContext)
   const [data, error] = useDbData(`/${user.uid}`)
 
@@ -47,6 +47,8 @@ const Table = ({ setIsOpen, recommendations = [] }) => {
             revenue={llmData.totalPotentialRevenue || 0}
             lastUpdateDate={cropData.lastUpdate}
             setIsOpen={setIsOpen}
+            setCropId={setCropId}
+            cropId={cropId}
           />
         )
       }) : (

@@ -16,6 +16,7 @@ import { userContext } from "../App";
 const Dashboard = () => {
   const user = useContext(userContext);
   const [dbInventory, error] = useDbData(`/${user.uid}`);
+  const [cropId, setCropId] = useState('');
   const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
@@ -208,8 +209,8 @@ const Dashboard = () => {
               setIsOpen={setIsOpen2}
               data={inventoryArray}
             />
-            <Table setIsOpen={setIsOpen} recommendations={recommendations} />
-            <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
+            <Table setIsOpen={setIsOpen} setCropId={setCropId} recommendations={recommendations} />
+            {isOpen && <CropModal setIsOpen={setIsOpen} cropId={cropId}/>}
             {isOpen2 && <AddModal setIsOpen={setIsOpen2} />}
           </>
         )}
