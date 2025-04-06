@@ -29,9 +29,6 @@ const Dashboard = ({ setForecast, setRecommendations, setSummary, forecast, reco
   const [showCityInput, setShowCityInput] = useState(false);
   const [filterUnhealthy, setFilterUnhealthy] = useState(false);
 
-  const cityInputRef = useRef(null);
-  const popupRef = useRef(null);
-
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
   const inventoryArray = dbInventory
@@ -102,20 +99,6 @@ const Dashboard = ({ setForecast, setRecommendations, setSummary, forecast, reco
     }
   };
 
-  const closePopup = (e) => {
-    if (popupRef.current && !popupRef.current.contains(e.target) && !cityInputRef.current.contains(e.target)) {
-      setShowCityInput(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", closePopup);
-
-    return () => {
-      document.removeEventListener("mousedown", closePopup);
-    };
-  }, []);
-
   if (dbInventory === undefined) {
     return (<div> Loading...</div>);
   }
@@ -170,31 +153,31 @@ const Dashboard = ({ setForecast, setRecommendations, setSummary, forecast, reco
 
                   {/* Popup for adding city */}
                   {showCityInput && (
-  <div
-    className="fixed inset-0 bg-opacity-30 border border-dark-green flex justify-center items-center z-50"
-    onClick={() => setShowCityInput(false)} // close popup when background is clicked
-  >
-    <div
-      className="bg-white p-6 rounded-lg border border-dark-green shadow-lg w-80"
-      onClick={(e) => e.stopPropagation()} // don't close when clicking inside
-    >
-      <h3 className="text-lg font-semibold text-center mb-4">Add a New City</h3>
-      <input
-        type="text"
-        className="border border-gray-300 p-2 rounded-md w-full mb-4"
-        placeholder="Enter City"
-        value={cityInput}
-        onChange={(e) => setCityInput(e.target.value)}
-      />
-      <button
-        className="w-full bg-green-800 hover:bg-green-900 transition duration-300 text-white p-2 rounded-md"
-        onClick={handleAddCity}
-      >
-        Add City
-      </button>
-    </div>
-  </div>
-)}
+                    <div
+                      className="fixed inset-0 bg-opacity-30 border border-dark-green flex justify-center items-center z-50"
+                      onClick={() => setShowCityInput(false)} // close popup when background is clicked
+                    >
+                      <div
+                        className="bg-white p-6 rounded-lg border border-dark-green shadow-lg w-80"
+                        onClick={(e) => e.stopPropagation()} // don't close when clicking inside
+                      >
+                        <h3 className="text-lg font-semibold text-center mb-4">Add a New City</h3>
+                        <input
+                          type="text"
+                          className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                          placeholder="Enter City"
+                          value={cityInput}
+                          onChange={(e) => setCityInput(e.target.value)}
+                        />
+                        <button
+                          className="w-full bg-green-800 hover:bg-green-900 transition duration-300 text-white p-2 rounded-md"
+                          onClick={handleAddCity}
+                        >
+                          Add City
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
                   <div className="flex gap-4 overflow-x-auto justify-center pb-2">
                     {forecast.map((day, idx) => (
