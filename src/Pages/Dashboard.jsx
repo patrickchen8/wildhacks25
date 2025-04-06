@@ -130,12 +130,9 @@ const Dashboard = () => {
     fetchWeather();
   }, []);
 
-  const [selected, setSelected] = useState('All');
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
-
+        <Navbar />
       <div className="grid gap-4 p-6 overflow-auto">
         {summary && (
           <>
