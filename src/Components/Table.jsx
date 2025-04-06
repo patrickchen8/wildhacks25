@@ -1,6 +1,17 @@
 import Row from './Row'
+import { useDbData } from '../utilities/firebase';
+import { userContext } from '../App'
+import { useContext } from 'react'
 
 const Table = ({setIsOpen}) => {
+    const user = useContext(userContext)
+    const [data, error] = useDbData(`/${user.uid}`)
+
+    if(data === undefined) {
+        return <div> Loading </div>
+    }
+    console.log(data)
+    
 
     return (
     <div className="flex flex-col mx-4 border-1 border-gray-300 rounded-lg">
@@ -17,23 +28,24 @@ const Table = ({setIsOpen}) => {
 
 
         {/* Rows */}
-        <Row crop="Corn"
-             storageType="Bin" 
-             isHealthy={true}
-             amount={1000}
-             harvestDate="1/2/2025"
-             sellByDate="6/5/2025"
-             lastUpdateDate="1/4/2025"
-             setIsOpen={setIsOpen}/>
-        
-        <Row crop="Grapes"
-             storageType="Bin" 
-             isHealthy={false}
-             amount={504}
-             harvestDate="1/12/2025"
-             sellByDate="6/1/2025"
-             lastUpdateDate="3/4/2025"
-             setIsOpen={setIsOpen}/>
+
+        {data ? Object.entries(data).map(([cropId, cropData]) => {
+            console.log(cropData)
+             return (<Row   key={cropId}
+                    crop={cropData.crop}
+                    storageType={cropData.storageType}
+                    isHealthy={cropData.isHealthy}
+                    amount={cropData.amount}
+                    harvestDate={cropData.harvestDate}
+                    sellByDate={cropData.sellByDate}
+                    lastUpdateDate={cropData.lastUpdate}
+                    setIsOpen={setIsOpen}/>)
+        })
+        :
+        <div className="flex justify-center align-center text-4xl mt-2"> 
+            No Inventory
+        </div>
+        }
 
     </div>)
 }

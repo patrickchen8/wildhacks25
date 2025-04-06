@@ -6,6 +6,7 @@ import RevenueBox from "../Components/RevenueBox";
 import Table from '../Components/Table'
 import ControlPanel from "../Components/ControlPanel.jsx"
 import CropModal from "../Components/CropModal.jsx";
+import AddModal from "../Components/AddModal.jsx";
 import CropStoragePie from "../Components/CropStoragePie.jsx";
 import RevenueBarChart from "../Components/RevenueBarChart.jsx";
 
@@ -16,6 +17,10 @@ const Dashboard = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [summary, setSummary] = useState(null);
   const [loadingRecs, setLoadingRecs] = useState(true);
+  const [selected, setSelected] = useState('All');
+  const [isOpen, setIsOpen] = useState(false); //crop modal
+  const [isOpen2, setIsOpen2] = useState(false); //add modal 
+
 
   const inventory = [
     {
@@ -125,12 +130,9 @@ const Dashboard = () => {
     fetchWeather();
   }, []);
 
-  const [selected, setSelected] = useState('All');
-  const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
-      <Navbar />
+        <Navbar />
       <div className="grid gap-4 p-6 overflow-auto">
         {summary && (
           <>
@@ -184,6 +186,7 @@ const Dashboard = () => {
             <ControlPanel selected={selected} setSelected={setSelected} />
             <Table setIsOpen={setIsOpen} />
             <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
+            {isOpen2 && <AddModal setIsOpen={setIsOpen2}/> }
           </>
         )}
       </div>
