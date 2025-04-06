@@ -46,6 +46,8 @@ export const sendHarvestChat = async (inventory, forecast = []) => {
       - "recommendation": short storage advice
       - "action": e.g. "Sell now", "Improve storage", "Safe for now"
       - "totalPotentialRevenue": estimated revenue in USD (based on average US market price × amount in kg)
+      - "sellByDate": estimated date when the crop should be sold by (in YYYY-MM-DD format), based on its shelf life and current storage conditions
+      - "spoilagePrediction": (a number between 0 and 1 representing spoilage risk, where 0 = very safe and 1 = extremely high spoilage risk)
 
     2. "summary":
       - "totalPotentialRevenue": number (sum of all crop values, (based on average US market price × amount in kg) for each crop summed up)

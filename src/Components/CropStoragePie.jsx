@@ -23,7 +23,7 @@ const CropStoragePie = ({ recommendations }) => {
   }));
 
   return (
-    <div className="w-full max-w-md bg-white p-3 rounded-xl shadow border border-dark-green h-85">
+    <div className="w-full bg-white p-3 rounded-xl shadow border border-dark-green h-85">
       <h2 className="text-xl font-semibold text-green-900 mb-2">Risk Level Breakdown</h2>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>

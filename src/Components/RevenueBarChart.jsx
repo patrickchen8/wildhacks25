@@ -17,7 +17,7 @@ const COLORS = ["#4ade80", "#60a5fa", "#facc15", "#f87171", "#a78bfa"];
 
 const RevenueBarChart = ({ data }) => {
   return (
-    <div className="w-full max-w-xl bg-white p-3 rounded-xl shadow border border-dark-green h-85">
+    <div className="w-full bg-white p-3 rounded-xl shadow border border-dark-green h-85">
       <h2 className="text-xl font-semibold text-green-900 mb-6">Revenue by Crop</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
