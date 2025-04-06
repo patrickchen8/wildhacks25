@@ -17,6 +17,7 @@ import { CircularProgress } from "@mui/material";
 const Dashboard = () => {
   const user = useContext(userContext);
   const [dbInventory, error] = useDbData(`/${user.uid}`);
+  const [cropId, setCropId] = useState('');
   const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
@@ -99,6 +100,10 @@ const Dashboard = () => {
       setShowCityInput(false);
     }
   };
+
+  if (dbInventory === undefined) {
+    return (<div> Loading...</div>)
+  }
 
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
@@ -213,8 +218,8 @@ const Dashboard = () => {
               setIsOpen={setIsOpen2}
               data={inventoryArray}
             />
-            <Table setIsOpen={setIsOpen} recommendations={recommendations} />
-            <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
+            <Table data={dbInventory} setIsOpen={setIsOpen} setCropId={setCropId} recommendations={recommendations} />
+            {isOpen && <CropModal data={dbInventory} setIsOpen={setIsOpen} cropId={cropId}/>}
             {isOpen2 && <AddModal setIsOpen={setIsOpen2} />}
           </>
         )}
