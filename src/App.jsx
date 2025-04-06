@@ -7,6 +7,9 @@ import {
   Route,
 } from "react-router-dom";
 import { useAuthState } from './utilities/firebase';
+import { createContext } from 'react';
+
+export const userContext = createContext();
 
 const App = () => {
   const [user, loading] = useAuthState()
@@ -22,12 +25,15 @@ const App = () => {
 
   return (
     user ? 
-    <Router>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/assistant" element={<Chatbot />} />
-      </Routes>
-    </Router>
+    <userContext.Provider value={user} >
+      <Router>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/assistant" element={<Chatbot />} />
+        </Routes>
+      </Router>
+    </userContext.Provider>
+
 
     :
 

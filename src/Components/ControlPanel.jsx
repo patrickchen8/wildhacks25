@@ -1,6 +1,6 @@
 import { IoIosAddCircleOutline } from "react-icons/io";
 
-const ControlPanel = ({selected, setSelected}) => {
+const ControlPanel = ({selected, setSelected, setIsOpen}) => {
   
     const options = [
       { id: 'All', label: 'All', count: null },
@@ -34,7 +34,8 @@ const ControlPanel = ({selected, setSelected}) => {
             </div>
 
 
-            <button className="flex rounded-lg px-3 items-center gap-x-2 py-2 shadow-lg bg-gray-100 cursor-pointer"> 
+            <button className="flex rounded-lg px-3 items-center gap-x-2 py-2 shadow-lg bg-gray-100 cursor-pointer"
+                    onClick={() => setIsOpen(true)}> 
                 <IoIosAddCircleOutline/>
                 <p>Add Crop</p>
             </button>
