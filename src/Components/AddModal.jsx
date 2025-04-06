@@ -16,7 +16,8 @@ const AddModal = ({setIsOpen}) => {
         'storageType': '',
         'amount': '',
         'harvestDate': '',
-        'image': null
+        'image': null,
+        'imagePreview': null,
     })
 
     console.log(data)
@@ -28,8 +29,12 @@ const AddModal = ({setIsOpen}) => {
 
     const handleUpload = (e) => {
         const img = e.target.files[0]
-        setData((oldData) => ({...oldData, ['image']: img}));
-    }
+        setData((oldData) => ({
+            ...oldData, 
+            'image': img, 
+            'imagePreview': URL.createObjectURL(img),
+        }));
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -88,74 +93,100 @@ const AddModal = ({setIsOpen}) => {
     }
 
     return (
-        <div
-            className={`fixed inset-0 flex justify-center items-center bg-black/20`}
-            onClick={() => {setIsOpen(false)}}
-        >
-            <div
-            className="flex flex-col gap-y-4 items-center bg-white rounded-md relative w-[35%] h-[75%]"
-            onClick={(e) => e.stopPropagation()}
-            >
-                <form className="flex flex-col w-full items-center"
-                      onSubmit={(e) => handleSubmit(e)}> 
+        <div className="fixed inset-0 flex justify-center items-center bg-black/50" onClick={() => setIsOpen(false)}>
+            <div className="flex flex-col gap-4 items-center bg-white rounded-xl p-8 w-11/12 max-w-lg shadow-lg" onClick={(e) => e.stopPropagation()}>
+                <h1 className="text-2xl font-semibold text-center mb-6">Add New Crop</h1>
 
-                <h1 className="self-start ml-4 text-4xl font-bold my-4">
-                    Add To Inventory
-                </h1>
+                <form className="flex flex-col w-full gap-4" onSubmit={handleSubmit}>
+                    {/* Crop Name */}
+                    <div className="flex flex-col">
+                        <label htmlFor="crop" className="text-sm text-gray-600 mb-2">Crop Name</label>
+                        <input
+                            type="text"
+                            id="crop"
+                            name="crop"
+                            value={data.crop}
+                            onChange={handleChange}
+                            className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+                            placeholder="Enter crop name"
+                        />
+                    </div>
 
-                <InputField 
-                   name="crop" 
-                   data={data.crop} 
-                   handleChange={handleChange}
-                   label="Crop" 
-               />
+                    {/* Storage Type */}
+                    <div className="flex flex-col">
+                        <label htmlFor="storageType" className="text-sm text-gray-600 mb-2">Storage Type</label>
+                        <input
+                            type="text"
+                            id="storageType"
+                            name="storageType"
+                            value={data.storageType}
+                            onChange={handleChange}
+                            className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+                            placeholder="Enter storage type"
+                        />
+                    </div>
 
+                    {/* Amount */}
+                    <div className="flex flex-col">
+                        <label htmlFor="amount" className="text-sm text-gray-600 mb-2">Amount (kg)</label>
+                        <input
+                            type="text"
+                            id="amount"
+                            name="amount"
+                            value={data.amount}
+                            onChange={handleChange}
+                            className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+                            placeholder="Enter amount"
+                        />
+                    </div>
 
-                <InputField 
-                   name="storageType" 
-                   data={data.storageType} 
-                   handleChange={handleChange}
-                   label="Storage Type" 
-               />
+                    {/* Harvest Date */}
+                    <div className="flex flex-col">
+                        <label htmlFor="harvestDate" className="text-sm text-gray-600 mb-2">Harvest Date</label>
+                        <input
+                            type="date"
+                            id="harvestDate"
+                            name="harvestDate"
+                            value={data.harvestDate}
+                            onChange={handleChange}
+                            className="p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-400"
+                        />
+                    </div>
 
-                <InputField 
-                   name="amount" 
-                   data={data.amount} 
-                   handleChange={handleChange}
-                   label="Amount" 
-               />
+                    {/* Image Upload */}
+                    <div className="flex flex-col">
+                        <label htmlFor="image" className="text-sm text-gray-600 mb-2">Crop Image</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            id="image"
+                            className="p-3 border border-gray-300 rounded-md cursor-pointer"
+                            onChange={handleUpload}
+                        />
+                    </div>
 
-                <div className="flex flex-col gap-y-1 border-2 border-black rounded-md w-[90%] p-2 mt-4">
-                    <label htmlFor="date" className="text-gray-500">Harvest date:</label>
-                    <input
-                        type="date"
-                        id="date"
-                        value={data.harvestDate}
-                        onChange={(e) => {
-                            setData((oldData) => ({...oldData, ['harvestDate']: e.target.value}));
-                        }}
-                    />
-                </div>
+                    {/* Image Preview */}
+                    {data.imagePreview && (
+                        <div className="mt-4">
+                            <img 
+                                src={data.imagePreview} 
+                                alt="Crop Preview" 
+                                className="max-w-[300px] h-[200px] object-cover rounded-md shadow-md mx-auto" 
+                            />
+                        </div>
+                    )}
 
-                <input type="file" 
-                        accept="image/*"
-                        className="border-2 rounded-lg p-4 mt-6 w-[90%]"
-                        onChange={(e) => {handleUpload(e)}}/>
-
-
-                <button className="self-end mr-4 mb-2 border-1 rounded-md p-2 mt-12 cursor-pointer"
-                        type="submit">
-                    Submit
-                </button>
-
+                    {/* Submit Button */}
+                    <button
+                        type="submit"
+                        className="bg-green-800 text-white p-3 rounded-md mt-6 hover:bg-green-900 transition duration-300"
+                    >
+                        Submit
+                    </button>
                 </form>
-            
             </div>
-      </div>
+        </div>
     )
-
-
-
 }
 
 export default AddModal; 

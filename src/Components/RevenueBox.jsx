@@ -17,7 +17,7 @@ const RevenueBox = ({ chartData, totalRevenue, totalLoss, type = "revenue" }) =>
   const data = chartData?.length ? chartData : fallbackData;
   const change = data.length >= 2 ? data[data.length - 1].value - data[0].value : 0;
   const changePercent = isRevenue
-    ? ((change / data[0].value) * 100).toFixed(1)
+    ? ((totalLoss / (totalRevenue - totalLoss)) * 100).toFixed(1)
     : ((totalLoss / totalRevenue) * 100).toFixed(1);
 
   const isPositive = isRevenue ? change >= 0 : false;

@@ -53,17 +53,54 @@ const readImageAsDataUrl = (file) => {
   });
 };
 
-export const sendChat = async (prompt) => {
+let initialContext = null; // Store the initial context globally
+
+export const sendChat = async (prompt, inventory = [], forecast = []) => {
   try {
     const chat = getChatSession();
-    const result = await chat.sendMessage(prompt);
+
+    // If context is not set, set it initially
+    if (!initialContext) {
+      initialContext = `
+        You are a farm assistant chatbot. Here is the current inventory of crops and their details:
+
+        Inventory:
+        ${inventory.map(item => `
+        Crop: ${item.crop}
+        Storage Type: ${item.storageType}
+        Health Status: ${item.healthStatus}
+        Amount: ${item.amount}
+        Harvest Date: ${item.harvestDate}
+        Sell By Date: ${item.sellByDate}
+        Last Update: ${item.lastUpdate}
+        `).join("\n")}
+
+        Weather Forecast:
+        ${forecast.map(day => `
+        Date: ${day.date}
+        Condition: ${day.day.condition.text}
+        Max Temp: ${day.day.maxtemp_c}°C
+        Min Temp: ${day.day.mintemp_c}°C
+        Humidity: ${day.day.avghumidity}%
+        Chance of Rain: ${day.day.daily_chance_of_rain}%
+        `).join("\n")}
+
+        Your task is to answer the user's queries related to these crops, providing storage advice, health status, and potential issues based on weather and inventory details.
+        Respond concisely, using the available context and avoiding unnecessary explanations.
+      `;
+    }
+
+    const completePrompt = initialContext + "\n" + prompt; // Combine context and prompt
+
+    const result = await chat.sendMessage(completePrompt);
     const response = result.response.text();
+
     return response;
   } catch (error) {
     console.error("Gemini API error:", error);
     return "⚠️ There was a problem responding to your question.";
   }
-}; 
+};
 
 export const sendHarvestChat = async (inventory, forecast = []) => {
   try {
