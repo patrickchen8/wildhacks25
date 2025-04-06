@@ -19,6 +19,40 @@ export const getChatSession = () => {
   return session;
 };
 
+
+export const sendMsg = async (prompt, image) => {
+  try{
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const imageData = await readImageAsDataUrl(image);
+  
+    const imagePart = {
+      inlineData: {
+        data: imageData.split(',')[1], // Remove data URL prefix
+        mimeType: image.type
+      }
+    };
+  
+    const result = await model.generateContent([prompt, imagePart]);
+    const responseText = result.response.text().replace(/^```json|```$/g, '').trim();
+    console.log(responseText);
+    const jsonResult = JSON.parse(responseText);
+    console.log(jsonResult)
+    return jsonResult;
+  } 
+  catch (error) {
+    console.log(error)
+  }
+}
+
+const readImageAsDataUrl = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 export const sendChat = async (prompt) => {
   try {
     const chat = getChatSession();
