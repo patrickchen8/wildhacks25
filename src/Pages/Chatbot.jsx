@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { CircularProgress } from "@mui/material";
 import { ArrowUpward } from "@mui/icons-material";
-import { sendHarvestChat } from "../gemini/GeminiFunctions";
+import { sendChat } from "../gemini/GeminiFunctions";
 import Navbar from "../Components/Navbar.jsx";
+
 
 
 const Chatbot = () => {
@@ -26,7 +27,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const response = await sendHarvestChat(trimmedMsg);
+      const response = await sendChat(trimmedMsg);
       setChatLog((prev) => [...prev, { sender: "AI", text: response }]);
     } catch (err) {
       setChatLog((prev) => [
