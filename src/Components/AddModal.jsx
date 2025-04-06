@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { useDbUpdate, uploadImage } from '../utilities/firebase';
+import { sendHarvestChat } from "../gemini/GeminiFunctions";
 import { userContext } from '../App';
 import { v4 as uuidv4 } from 'uuid';
 import InputField from './InputField';
@@ -64,6 +65,8 @@ const AddModal = ({setIsOpen}) => {
         
         update(data)
         setIsOpen(false)
+
+        //LLM Logic 
 
     }
 
