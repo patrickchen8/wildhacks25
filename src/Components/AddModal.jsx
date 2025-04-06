@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useDbUpdate, uploadImage } from '../utilities/firebase';
-import { sendHarvestChat } from "../gemini/GeminiFunctions";
+import { sendMsg } from "../gemini/GeminiFunctions";
 import { userContext } from '../App';
 import { v4 as uuidv4 } from 'uuid';
 import InputField from './InputField';
@@ -16,7 +16,7 @@ const AddModal = ({setIsOpen}) => {
         'storageType': '',
         'amount': '',
         'harvestDate': '',
-        'images': []
+        'image': null
     })
 
     console.log(data)
@@ -27,11 +27,11 @@ const AddModal = ({setIsOpen}) => {
     }
 
     const handleUpload = (e) => {
-        const images = e.target.files 
-        setData((oldData) => ({...oldData, ['images']: Array.from(images)}));
+        const img = e.target.files[0]
+        setData((oldData) => ({...oldData, ['image']: img}));
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault()
         const currentDate = new Date();
         const year = currentDate.getFullYear(); 
@@ -43,31 +43,48 @@ const AddModal = ({setIsOpen}) => {
         data['isHealthy'] = 'processing'
         data['sellByDate'] = 'processing'
 
-        const downloadUrl = []
+        const image = data.image
 
-        data.images.forEach(async (file) => {
-            if(file) {
-                console.log('wtf')
-                try{
-                    const fileName = `${user.uid}-${file.name}`
-                    const path = `uploads/${fileName}`;
-                    const url = await uploadImage(file, path);
-                    console.log(url)
-                    downloadUrl.push(url)
-                }
-                catch (error) {
-                    console.error('Upload failed:', error);
-                }
-                
+        if(data.image) {
+            console.log('wtf')
+            try{
+                const fileName = `${user.uid}-${data.image.name}`
+                const path = `uploads/${fileName}`;
+                const url = await uploadImage(data.image, path);
+                console.log(url)
+                data.image = url
             }
-        })
-        data.images = downloadUrl 
+            catch (error) {
+                console.error('Upload failed:', error);
+            }
+            
+        }
         
         update(data)
         setIsOpen(false)
 
         //LLM Logic 
+        prompt = `Analyze this image of corn and determine if it appears healthy or not.
+                Return ONLY a JSON object with the following structure:
+                {
+                    "isHealthy": boolean,
+                    "reason": "detailed explanation of why the corn is healthy or unhealthy"
+                }
+                
+                If you see signs of disease, pest damage, nutrient deficiency, or other issues,
+                set isHealthy to false and explain the issues in the reason field.
+                If the corn appears healthy, set isHealthy to true and explain the visual indicators of health.
+                
+                Important: Return ONLY valid JSON that can be parsed by JSON.parse() without any additional text.`
+        
+        const jsonResult = await sendMsg(prompt, image)
 
+        console.log(jsonResult)
+
+        data['isHealthy'] = jsonResult['isHealthy']
+        data['healthReason'] = jsonResult['reason']
+
+        update(data)
     }
 
     return (
@@ -122,7 +139,6 @@ const AddModal = ({setIsOpen}) => {
 
                 <input type="file" 
                         accept="image/*"
-                        multiple
                         className="border-2 rounded-lg p-4 mt-6 w-[90%]"
                         onChange={(e) => {handleUpload(e)}}/>
 
