@@ -14,7 +14,7 @@ const Table = ({setIsOpen}) => {
     
 
     return (
-    <div className="flex flex-col mx-4 mt-8 border-1 border-gray-300 rounded-lg">
+    <div className="flex flex-col mx-4 border-1 border-gray-300 rounded-lg">
         {/* Header */}
         <div className="flex justify-between py-2 bg-dark-green">
             <p className="w-[200px] text-center font-semibold"> Crop </p>

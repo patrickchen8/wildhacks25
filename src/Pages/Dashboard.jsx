@@ -1,26 +1,200 @@
-import { useState } from 'react'
+import { useState, useEffect } from "react";
 import Navbar from "../Components/Navbar.jsx";
+import axios from "axios";
+import { sendHarvestChat } from "../gemini/GeminiFunctions";
+import RevenueBox from "../Components/RevenueBox";
 import Table from '../Components/Table'
 import ControlPanel from "../Components/ControlPanel.jsx"
 import CropModal from "../Components/CropModal.jsx";
 import AddModal from "../Components/AddModal.jsx";
+import CropStoragePie from "../Components/CropStoragePie.jsx";
+import RevenueBarChart from "../Components/RevenueBarChart.jsx";
 
 
 const Dashboard = () => {
-    const [selected, setSelected] = useState('All');
-    const [isOpen, setIsOpen] = useState(false); //crop modal
-    const [isOpen2, setIsOpen2] = useState(false); //add modal 
+  const [forecast, setForecast] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState([]);
+  const [summary, setSummary] = useState(null);
+  const [loadingRecs, setLoadingRecs] = useState(true);
+  const [selected, setSelected] = useState('All');
+  const [isOpen, setIsOpen] = useState(false); //crop modal
+  const [isOpen2, setIsOpen2] = useState(false); //add modal 
 
-    return (
+
+  const inventory = [
+    {
+      crop: "Maize",
+      storageType: "Airtight plastic container",
+      healthStatus: "Good",
+      amount: "120kg",
+      harvestDate: "2024-03-01",
+      sellByDate: "2024-04-20",
+      lastUpdate: "2024-04-03",
+    },
+    {
+      crop: "Cassava",
+      storageType: "Open-air shed",
+      healthStatus: "At Risk",
+      amount: "80kg",
+      harvestDate: "2024-03-15",
+      sellByDate: "2024-04-10",
+      lastUpdate: "2024-04-05",
+    },
+    {
+      crop: "Beans",
+      storageType: "Woven sack in cool room",
+      healthStatus: "Good",
+      amount: "100kg",
+      harvestDate: "2024-03-10",
+      sellByDate: "2024-05-01",
+      lastUpdate: "2024-04-06",
+    },
+    {
+      crop: "Sweet Potatoes",
+      storageType: "Underground pit",
+      healthStatus: "Medium",
+      amount: "60kg",
+      harvestDate: "2024-03-20",
+      sellByDate: "2024-04-25",
+      lastUpdate: "2024-04-07",
+    },
+    {
+      crop: "Groundnuts",
+      storageType: "Sealed metallic bin",
+      healthStatus: "Good",
+      amount: "50kg",
+      harvestDate: "2024-03-05",
+      sellByDate: "2024-05-10",
+      lastUpdate: "2024-04-04",
+    },
+    {
+      crop: "Yam",
+      storageType: "Stacked under ventilated roof",
+      healthStatus: "Medium",
+      amount: "75kg",
+      harvestDate: "2024-03-18",
+      sellByDate: "2024-04-28",
+      lastUpdate: "2024-04-06",
+    },
+  ];
+
+  const pieData = recommendations.map(item => ({
+    name: item.crop,
+    value: parseFloat(inventory.find(c => c.crop === item.crop)?.amount.replace("kg", "") || 0),
+    risk: item.riskLevel
+  }));
+
+  const revenueData = recommendations.map(item => ({
+    name: item.crop,
+    revenue: item.totalPotentialRevenue,
+  }));
+
+  const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+  const CITY = "Nairobi";
+
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const res = await axios.get(
+          `https://api.weatherapi.com/v1/forecast.json`,
+          {
+            params: {
+              key: API_KEY,
+              q: CITY,
+              days: 5,
+            },
+          }
+        );
+        const forecastData = res.data.forecast.forecastday;
+        setForecast(forecastData);
+
+        const llmResponse = await sendHarvestChat(inventory, forecastData);
+
+        if (llmResponse && llmResponse.recommendations && llmResponse.summary) {
+          setRecommendations(llmResponse.recommendations);
+          setSummary(llmResponse.summary);
+          console.log(llmResponse.recommendations)
+        } else {
+          console.warn("Invalid format from LLM:", llmResponse);
+        }
+
+        setLoadingRecs(false);
+      } catch (error) {
+        console.error("WeatherAPI or LLM error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
+  const [selected, setSelected] = useState('All');
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
-        <Navbar/>
-        <ControlPanel selected={selected} setSelected={setSelected} setIsOpen={setIsOpen2} />
-        <Table setIsOpen={setIsOpen}/>
-        <CropModal isOpen={isOpen} setIsOpen={setIsOpen}/>
-        {isOpen2 && <AddModal setIsOpen={setIsOpen2}/> }
+
+      <div className="grid gap-4 p-6 overflow-auto">
+        {summary && (
+          <>
+            <div className="flex w-full gap-4">
+              <div className="w-3/10">
+                <RevenueBox type="revenue" totalRevenue={summary.totalPotentialRevenue} />
+              </div>
+              <div className="w-3/10">
+                <RevenueBox type="loss" totalLoss={summary.potentialLossIfNoAction} totalRevenue={summary.totalPotentialRevenue}/>
+              </div>
+              <div className="w-2/5">
+                {loading ? (
+                  <p className="text-gray-500">Loading weather...</p>
+                ) : (
+                  <div className="bg-white p-3 rounded-xl shadow-md border border-dark-green h-50">
+                    <h3 className="text-xl font-semibold text-green-900 mb-2">Weather Forecast</h3>
+                    <div className="flex gap-6 overflow-x-auto pb-2">
+                      {forecast.map((day, idx) => (
+                        <div
+                          key={idx}
+                          className="w-28 bg-green-50 border border-green-200 rounded-xl p-2 flex flex-col items-center shadow-sm"
+                        >
+                          <p className="text-md font-semibold text-green-800 mb-1">
+                            {new Date(day.date).toLocaleDateString("en-US", {
+                              weekday: "short",
+                            })}
+                          </p>
+                          <img
+                            src={`https:${day.day.condition.icon}`}
+                            alt={day.day.condition.text}
+                            className="w-14 h-14 mb-2"
+                          />
+                          <p className="text-sm text-green-700 font-medium">
+                            {Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+  
+            {!loadingRecs && (
+              <div className="flex flex-wrap gap-6 justify-start">
+                  <CropStoragePie recommendations={recommendations} />
+                  <RevenueBarChart data={revenueData} />
+              </div>
+            )}
+
+            <ControlPanel selected={selected} setSelected={setSelected} />
+            <Table setIsOpen={setIsOpen} />
+            <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
+            {isOpen2 && <AddModal setIsOpen={setIsOpen2}/> }
+          </>
+        )}
+      </div>
     </div>
-    )
+  );
 }
 
-export default Dashboard
-
+export default Dashboard;
