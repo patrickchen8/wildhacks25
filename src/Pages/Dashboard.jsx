@@ -130,13 +130,12 @@ const Dashboard = () => {
     fetchWeather();
   }, []);
 
-  const [selected, setSelected] = useState('All');
-  const [isOpen, setIsOpen] = useState(false);
+  
 
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
-
-      <div className="grid gap-4 p-6 overflow-auto">
+      <Navbar />
+      <div className="grid gap-4 overflow-hidden px-4">
         {summary && (
           <>
             <div className="flex w-full gap-4">
@@ -146,7 +145,7 @@ const Dashboard = () => {
               <div className="w-3/10">
                 <RevenueBox type="loss" totalLoss={summary.potentialLossIfNoAction} totalRevenue={summary.totalPotentialRevenue}/>
               </div>
-              <div className="w-2/5">
+              <div className="w-[35%]">
                 {loading ? (
                   <p className="text-gray-500">Loading weather...</p>
                 ) : (
