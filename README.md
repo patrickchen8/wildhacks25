@@ -25,7 +25,7 @@
 <br />
 <div align="center">
 
-  <img src="src/assets/logo.svg" width="150" height="150">
+  <img src="src/assets/Logo.svg" width="150" height="150">
 
   <p align="center">
     <a href="https://kavu-fbf9c.web.app">View Demo</a>
