@@ -1,23 +1,21 @@
-import { useContext, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { IoCloseCircleOutline } from "react-icons/io5";
-import { useDbData, fetchImage } from "../utilities/firebase";
-import { userContext } from '../App';
+import { fetchImage } from "../utilities/firebase";
 
 
-const CropModal = ({ isOpen, setIsOpen, cropId }) => {
+const CropModal = ({ data, setIsOpen, cropId }) => {
     const [img, setImg] = useState('')
-    const user = useContext(userContext)
-    const [data, error] = useDbData(`/${user.uid}/${cropId}`)
     
     useEffect(() => {
         const wrapper = async () => {
-            const response = await fetchImage(request.image);
+            console.log(data[cropId])
+            const response = await fetchImage(data[cropId].image);
             setImg(response);
         }
 
         wrapper()
     }, 
-    [request.image])
+    [data[cropId].image])
 
     return (
         <div
@@ -33,30 +31,22 @@ const CropModal = ({ isOpen, setIsOpen, cropId }) => {
                     <IoCloseCircleOutline size={27}/>
                 </div>
 
-                {data === undefined ? 
-                    <div>
-                        Loading Data... 
-                    </div>
 
-                    :
+                <h1 className="text-4xl font-bold ml-8 mt-8 self-start"> {data[cropId].crop} </h1>
 
-                    <>
-                         <h1 className="text-4xl font-bold ml-8 mt-12 self-start"> {data.crop} </h1>
+                <img src={img}
+                    className="w-[80%]"/>
 
-                         <img src={img}/>
+                <h2 className="text-2xl"> Health </h2>
+                <p className="text-sm px-2"> {data[cropId].healthReason}</p>
 
-                         <h2 className="text-2xl"> Health </h2>
-                        <p className="text-sm px-2"> {data.healthReason}</p>
 
-                        <button className="border-2 border-black bg-black text-white p-2 rounded-lg w-[90%] mt-auto mb-2">
-                            Update 
-                        </button>
-                    </>
-                }
-                
-               
-                
-                
+                <h2 className="text-2xl"> Recommendations </h2>
+                <p className="text-sm px-2"> {data[cropId].healthReason}</p>
+
+                <button className="border-2 border-black bg-black text-white p-2 rounded-lg w-[90%] mt-auto mb-2">
+                    Update 
+                </button>
 
 
             </div>

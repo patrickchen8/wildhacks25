@@ -98,6 +98,10 @@ const Dashboard = () => {
     }
   };
 
+  if (dbInventory === undefined) {
+    return (<div> Loading...</div>)
+  }
+
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
       <Navbar />
@@ -209,8 +213,8 @@ const Dashboard = () => {
               setIsOpen={setIsOpen2}
               data={inventoryArray}
             />
-            <Table setIsOpen={setIsOpen} setCropId={setCropId} recommendations={recommendations} />
-            {isOpen && <CropModal setIsOpen={setIsOpen} cropId={cropId}/>}
+            <Table data={dbInventory} setIsOpen={setIsOpen} setCropId={setCropId} recommendations={recommendations} />
+            {isOpen && <CropModal data={dbInventory} setIsOpen={setIsOpen} cropId={cropId}/>}
             {isOpen2 && <AddModal setIsOpen={setIsOpen2} />}
           </>
         )}
