@@ -25,9 +25,9 @@ const RevenueBox = ({ chartData, totalRevenue, totalLoss, type = "revenue" }) =>
   const totalValue = isRevenue ? totalRevenue : totalLoss;
 
   return (
-    <div className="relative w-110 h-60 rounded-xl shadow-sm border border-dark-green bg-gradient-to-br bg-tan p-6">
+    <div className="relative h-50 rounded-xl shadow-sm border border-dark-green bg-gradient-to-br bg-white p-3">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold text-dark-green">{title}</h2>
+        <h2 className="text-xl font-semibold text-green-900">{title}</h2>
         <div className="flex items-center gap-1">
           {isPositive ? (
             <IoIosTrendingUp className="w-5 h-5 text-green-600" />
