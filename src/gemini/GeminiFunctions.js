@@ -125,6 +125,8 @@ export const sendHarvestChat = async (inventory, forecast = []) => {
       - "potentialLossIfNoAction": number (estimated loss due to risky conditions based on the revenue you found)
       - "comment": brief analysis (e.g., risk outlook, revenue tips)
 
+    Also, for risk factors, keep them varried, so if theyre not so great varry from medium to high risk at your own discretion where it fits best but keep varried results for graph purposes
+
     Use realistic US market prices from the past week. Use the data below:
 
     Inventory:

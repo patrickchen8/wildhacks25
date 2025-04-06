@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import Navbar from "../Components/Navbar.jsx";
 import axios from "axios";
 import { sendHarvestChat } from "../gemini/GeminiFunctions";
@@ -14,14 +14,11 @@ import { useDbData } from "../utilities/firebase";
 import { userContext } from "../App";
 import { CircularProgress } from "@mui/material";
 
-const Dashboard = () => {
+const Dashboard = ({ setForecast, setRecommendations, setSummary, forecast, recommendations, summary }) => {
   const user = useContext(userContext);
   const [dbInventory, error] = useDbData(`/${user.uid}`);
   const [cropId, setCropId] = useState('');
-  const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [recommendations, setRecommendations] = useState([]);
-  const [summary, setSummary] = useState(null);
   const [loadingRecs, setLoadingRecs] = useState(true);
   const [selected, setSelected] = useState("All");
   const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +27,10 @@ const Dashboard = () => {
   const [cityList, setCityList] = useState(["London", "New York", "Paris"]);
   const [cityInput, setCityInput] = useState("");
   const [showCityInput, setShowCityInput] = useState(false);
+  const [filterUnhealthy, setFilterUnhealthy] = useState(false);
 
-  const [filterUnhealthy, setFilterUnhealthy] = useState(false); // Track if we want to filter unhealthy crops
+  const cityInputRef = useRef(null);
+  const popupRef = useRef(null);
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -103,8 +102,22 @@ const Dashboard = () => {
     }
   };
 
+  const closePopup = (e) => {
+    if (popupRef.current && !popupRef.current.contains(e.target) && !cityInputRef.current.contains(e.target)) {
+      setShowCityInput(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", closePopup);
+
+    return () => {
+      document.removeEventListener("mousedown", closePopup);
+    };
+  }, []);
+
   if (dbInventory === undefined) {
-    return (<div> Loading...</div>)
+    return (<div> Loading...</div>);
   }
 
   return (
@@ -157,25 +170,31 @@ const Dashboard = () => {
 
                   {/* Popup for adding city */}
                   {showCityInput && (
-                    <div className="fixed inset-0 bg-opacity-30 border border-dark-green flex justify-center items-center z-50">
-                      <div className="bg-white p-6 rounded-lg border border-dark-green shadow-lg w-80">
-                        <h3 className="text-lg font-semibold text-center mb-4">Add a New City</h3>
-                        <input
-                          type="text"
-                          className="border border-gray-300 p-2 rounded-md w-full mb-4"
-                          placeholder="Enter City"
-                          value={cityInput}
-                          onChange={(e) => setCityInput(e.target.value)}
-                        />
-                        <button
-                          className="w-full bg-green-800 hover:bg-green-900 transition duration-300 text-white p-2 rounded-md"
-                          onClick={handleAddCity}
-                        >
-                          Add City
-                        </button>
-                      </div>
-                    </div>
-                  )}
+  <div
+    className="fixed inset-0 bg-opacity-30 border border-dark-green flex justify-center items-center z-50"
+    onClick={() => setShowCityInput(false)} // close popup when background is clicked
+  >
+    <div
+      className="bg-white p-6 rounded-lg border border-dark-green shadow-lg w-80"
+      onClick={(e) => e.stopPropagation()} // don't close when clicking inside
+    >
+      <h3 className="text-lg font-semibold text-center mb-4">Add a New City</h3>
+      <input
+        type="text"
+        className="border border-gray-300 p-2 rounded-md w-full mb-4"
+        placeholder="Enter City"
+        value={cityInput}
+        onChange={(e) => setCityInput(e.target.value)}
+      />
+      <button
+        className="w-full bg-green-800 hover:bg-green-900 transition duration-300 text-white p-2 rounded-md"
+        onClick={handleAddCity}
+      >
+        Add City
+      </button>
+    </div>
+  </div>
+)}
 
                   <div className="flex gap-4 overflow-x-auto justify-center pb-2">
                     {forecast.map((day, idx) => (

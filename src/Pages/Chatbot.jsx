@@ -60,7 +60,7 @@ const Chatbot = ({ forecast, recommendations, summary }) => {
       <div
         className={`${
           showPrompt ? "opacity-100" : "opacity-0"
-        } flex items-center justify-center flex-grow absolute inset-0 mb-40 transition-opacity duration-2000 ease-out`}
+        } flex items-center justify-center flex-grow absolute inset-0 mb-40 transition-opacity duration-800 ease-out`}
         style={{ zIndex: 1 }} 
       >
         <div data-svg-wrapper className="flex items-center mr-4 justify-center">
