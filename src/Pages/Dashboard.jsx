@@ -24,22 +24,16 @@ const Dashboard = () => {
   const [selected, setSelected] = useState("All");
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
+  const [location, setLocation] = useState("Nairobi");
+  const [cityList, setCityList] = useState(["London", "New York", "Paris"]);
+  const [cityInput, setCityInput] = useState("");
+  const [showCityInput, setShowCityInput] = useState(false);
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
-  const CITY = "Nairobi";
 
   const inventoryArray = dbInventory
     ? Object.values(dbInventory).filter((item) => item?.crop)
     : [];
-
-  const pieData = recommendations.map((item) => ({
-    name: item.crop,
-    value:
-      parseFloat(
-        inventoryArray.find((c) => c.crop === item.crop)?.amount.replace("kg", "")
-      ) || 0,
-    risk: item.riskLevel,
-  }));
 
   const revenueData = recommendations.map((item) => ({
     name: item.crop,
@@ -65,7 +59,7 @@ const Dashboard = () => {
         const res = await axios.get(`https://api.weatherapi.com/v1/forecast.json`, {
           params: {
             key: API_KEY,
-            q: CITY,
+            q: location,
             days: 5,
           },
         });
@@ -79,7 +73,6 @@ const Dashboard = () => {
           if (llmResponse?.recommendations && llmResponse?.summary) {
             setRecommendations(llmResponse.recommendations);
             setSummary(llmResponse.summary);
-            console.log(llmResponse.recommendations);
           } else {
             console.warn("LLM response malformed:", llmResponse);
           }
@@ -94,7 +87,15 @@ const Dashboard = () => {
     };
 
     fetchWeather();
-  }, [dbInventory]);
+  }, [dbInventory, location]);
+
+  const handleAddCity = () => {
+    if (cityInput.trim() && !cityList.includes(cityInput.trim())) {
+      setCityList([...cityList, cityInput.trim()]);
+      setCityInput(""); 
+      setShowCityInput(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
@@ -118,14 +119,55 @@ const Dashboard = () => {
                   <p className="text-gray-500">Loading weather...</p>
                 ) : (
                   <div className="bg-white p-3 rounded-xl shadow-md border border-dark-green h-50">
-                    <h3 className="text-xl font-semibold text-green-900 mb-2">Weather Forecast</h3>
-                    <div className="flex gap-6 overflow-x-auto pb-2">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-xl font-semibold text-green-900 mb-2">Weather Forecast</h3>
+                      <div className="relative flex items-center space-x-2">
+                        <select
+                          className="border border-gray-300 p-1 rounded-md"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                        >
+                          {cityList.map((city, idx) => (
+                            <option key={idx} value={city}>
+                              {city}
+                            </option>
+                          ))}
+                        </select>
+
+                        <button
+                          onClick={() => setShowCityInput(!showCityInput)}
+                          className="text-green-600 font-bold text-sm"
+                        >
+                          {showCityInput ? "-" : "+"}
+                        </button>
+                      </div>
+
+                      {showCityInput && (
+                        <div className="absolute right-0 mt-2 p-2 bg-white shadow-md border rounded-md w-40">
+                          <input
+                            type="text"
+                            className="border border-gray-300 p-2 rounded-md w-full"
+                            placeholder="Enter City"
+                            value={cityInput}
+                            onChange={(e) => setCityInput(e.target.value)}
+                          />
+                          <button
+                            className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md"
+                            onClick={handleAddCity}
+                          >
+                            Add City
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-4 overflow-x-auto justify-center pb-2">
                       {forecast.map((day, idx) => (
                         <div
                           key={idx}
-                          className="w-28 bg-green-50 border border-green-200 rounded-xl p-2 flex flex-col items-center shadow-sm"
+                          className="w-28 bg-green-50 border border-dark-green rounded-xl p-2 flex flex-col items-center shadow-md"
                         >
-                          <p className="text-md font-semibold text-green-800 mb-1">
+                          <p className="text-md font-semibold text-dark-green mb-1">
                             {new Date(day.date).toLocaleDateString("en-US", {
                               weekday: "short",
                             })}
@@ -135,7 +177,7 @@ const Dashboard = () => {
                             alt={day.day.condition.text}
                             className="w-14 h-14 mb-2"
                           />
-                          <p className="text-sm text-green-700 font-medium">
+                          <p className="text-sm text-dark-green font-medium">
                             {Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°
                           </p>
                         </div>
@@ -148,16 +190,16 @@ const Dashboard = () => {
 
             {!loadingRecs && (
               <div className="flex gap-4 justify-between">
-              <div className="w-1/3">
-                <CropStoragePie recommendations={recommendations} />
+                <div className="w-1/3">
+                  <CropStoragePie recommendations={recommendations} />
+                </div>
+                <div className="w-1/3">
+                  <RevenueBarChart data={revenueData} />
+                </div>
+                <div className="w-1/3">
+                  <CropSpoilageChart data={spoilageChartData} />
+                </div>
               </div>
-              <div className="w-1/3">
-                <RevenueBarChart data={revenueData} />
-              </div>
-              <div className="w-1/3">
-                <CropSpoilageChart data={spoilageChartData} />
-              </div>
-            </div>
             )}
 
             <ControlPanel
