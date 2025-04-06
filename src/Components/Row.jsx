@@ -2,10 +2,12 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import { GiHealthNormal } from "react-icons/gi";
 
 
-const Row = ({crop, storageType, isHealthy, amount, harvestDate, sellByDate, lastUpdateDate}) => {
+const Row = ({crop, storageType, isHealthy, amount, harvestDate, sellByDate, lastUpdateDate, setIsOpen}) => {
+
 
     return (
-        <div className="flex justify-between border-t-1 border-gray-300 py-2 hover:bg-tan">
+        <div className="flex justify-between border-t-1 border-gray-300 py-2 bg-white cursor-pointer hover:bg-tan"
+            onClick={() => setIsOpen(true)}>
             <p className="w-[200px] text-center"> 
                 {crop} 
             </p>
