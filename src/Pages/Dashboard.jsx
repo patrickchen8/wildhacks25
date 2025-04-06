@@ -6,6 +6,8 @@ import RevenueBox from "../Components/RevenueBox";
 import Table from '../Components/Table'
 import ControlPanel from "../Components/ControlPanel.jsx"
 import CropModal from "../Components/CropModal.jsx";
+import CropStoragePie from "../Components/CropStoragePie.jsx";
+import RevenueBarChart from "../Components/RevenueBarChart.jsx";
 
 
 const Dashboard = () => {
@@ -34,7 +36,54 @@ const Dashboard = () => {
       sellByDate: "2024-04-10",
       lastUpdate: "2024-04-05",
     },
+    {
+      crop: "Beans",
+      storageType: "Woven sack in cool room",
+      healthStatus: "Good",
+      amount: "100kg",
+      harvestDate: "2024-03-10",
+      sellByDate: "2024-05-01",
+      lastUpdate: "2024-04-06",
+    },
+    {
+      crop: "Sweet Potatoes",
+      storageType: "Underground pit",
+      healthStatus: "Medium",
+      amount: "60kg",
+      harvestDate: "2024-03-20",
+      sellByDate: "2024-04-25",
+      lastUpdate: "2024-04-07",
+    },
+    {
+      crop: "Groundnuts",
+      storageType: "Sealed metallic bin",
+      healthStatus: "Good",
+      amount: "50kg",
+      harvestDate: "2024-03-05",
+      sellByDate: "2024-05-10",
+      lastUpdate: "2024-04-04",
+    },
+    {
+      crop: "Yam",
+      storageType: "Stacked under ventilated roof",
+      healthStatus: "Medium",
+      amount: "75kg",
+      harvestDate: "2024-03-18",
+      sellByDate: "2024-04-28",
+      lastUpdate: "2024-04-06",
+    },
   ];
+
+  const pieData = recommendations.map(item => ({
+    name: item.crop,
+    value: parseFloat(inventory.find(c => c.crop === item.crop)?.amount.replace("kg", "") || 0),
+    risk: item.riskLevel
+  }));
+
+  const revenueData = recommendations.map(item => ({
+    name: item.crop,
+    revenue: item.totalPotentialRevenue,
+  }));
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
   const CITY = "Nairobi";
@@ -60,7 +109,7 @@ const Dashboard = () => {
         if (llmResponse && llmResponse.recommendations && llmResponse.summary) {
           setRecommendations(llmResponse.recommendations);
           setSummary(llmResponse.summary);
-          console.log(llmResponse.summary)
+          console.log(llmResponse.recommendations)
         } else {
           console.warn("Invalid format from LLM:", llmResponse);
         }
@@ -76,97 +125,70 @@ const Dashboard = () => {
     fetchWeather();
   }, []);
 
-  const getRiskColor = (level) => {
-    switch (level) {
-      case "Low":
-        return "text-green-600";
-      case "Medium":
-        return "text-yellow-600";
-      case "High":
-        return "text-red-600";
-      default:
-        return "text-gray-600";
-    }
-  };
-
-    const [selected, setSelected] = useState('All');
-    const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState('All');
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
       <Navbar />
-      <div className="grid gap-4 p-6">
+      <div className="grid gap-4 p-6 overflow-auto">
         {summary && (
-        <>
-        <div className="flex flex-wrap gap-4 justify-center">
-          <RevenueBox type = "revenue" totalRevenue = {summary.totalPotentialRevenue}/>
-          <RevenueBox type = "loss" totalLoss = {summary.potentialLossIfNoAction} totalRevenue={summary.totalPotentialRevenue}/>
-          {loading ? (
-            <p className="text-gray-500">Loading weather...</p>
-          ) : (
-            <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200 max-h-60">
-              <h3 className="text-2xl font-bold text-green-900 mb-4">Weather Forecast</h3>
-              <div className="flex gap-6 overflow-x-auto pb-2">
-                {forecast.map((day, idx) => (
-                  <div
-                    key={idx}
-                    className="w-28 bg-green-50 border border-green-200 rounded-xl p-4 flex flex-col items-center shadow-sm"
-                  >
-                    <p className="text-md font-semibold text-green-800 mb-1">
-                      {new Date(day.date).toLocaleDateString("en-US", {
-                        weekday: "short",
-                      })}
-                    </p>
-                    <img
-                      src={`https:${day.day.condition.icon}`}
-                      alt={day.day.condition.text}
-                      className="w-14 h-14 mb-2"
-                    />
-                    <p className="text-sm text-green-700 font-medium">
-                      {Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°
-                    </p>
+          <>
+            <div className="flex w-full gap-4">
+              <div className="w-3/10">
+                <RevenueBox type="revenue" totalRevenue={summary.totalPotentialRevenue} />
+              </div>
+              <div className="w-3/10">
+                <RevenueBox type="loss" totalLoss={summary.potentialLossIfNoAction} totalRevenue={summary.totalPotentialRevenue}/>
+              </div>
+              <div className="w-2/5">
+                {loading ? (
+                  <p className="text-gray-500">Loading weather...</p>
+                ) : (
+                  <div className="bg-white p-3 rounded-xl shadow-md border border-dark-green h-50">
+                    <h3 className="text-xl font-semibold text-green-900 mb-2">Weather Forecast</h3>
+                    <div className="flex gap-6 overflow-x-auto pb-2">
+                      {forecast.map((day, idx) => (
+                        <div
+                          key={idx}
+                          className="w-28 bg-green-50 border border-green-200 rounded-xl p-2 flex flex-col items-center shadow-sm"
+                        >
+                          <p className="text-md font-semibold text-green-800 mb-1">
+                            {new Date(day.date).toLocaleDateString("en-US", {
+                              weekday: "short",
+                            })}
+                          </p>
+                          <img
+                            src={`https:${day.day.condition.icon}`}
+                            alt={day.day.condition.text}
+                            className="w-14 h-14 mb-2"
+                          />
+                          <p className="text-sm text-green-700 font-medium">
+                            {Math.round(day.day.maxtemp_c)}° / {Math.round(day.day.mintemp_c)}°
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
             </div>
-          )}
-        </div>
-        </>
-        )}
+  
+            {!loadingRecs && (
+              <div className="flex flex-wrap gap-6 justify-start">
+                  <CropStoragePie recommendations={recommendations} />
+                  <RevenueBarChart data={revenueData} />
+              </div>
+            )}
 
-        {/* {loadingRecs ? (
-          <p className="text-gray-500">Loading crop recommendations...</p>
-        ) : (
-          recommendations.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-md border border-gray-200 rounded-lg p-5"
-            >
-              <h2 className="text-xl font-semibold mb-1">{item.crop}</h2>
-              <p className={`mb-2 font-medium ${getRiskColor(item.riskLevel)}`}>
-                Risk Level: {item.riskLevel}
-              </p>
-              <p className="mb-1">
-                <strong>Recommendation:</strong> {item.recommendation}
-              </p>
-              <p>
-                <strong>Action:</strong>{" "}
-                <span className="font-semibold">{item.action}</span>
-              </p>
-              <p className="mt-2 text-green-700 font-semibold">
-                Estimated Revenue: ${item.totalPotentialRevenue.toLocaleString()}
-              </p>
-            </div>
-          ))
-        )} */}
+            <ControlPanel selected={selected} setSelected={setSelected} />
+            <Table setIsOpen={setIsOpen} />
+            <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
+          </>
+        )}
       </div>
-        <ControlPanel selected={selected} setSelected={setSelected} />
-        <Table setIsOpen={setIsOpen}/>
-        <CropModal isOpen={isOpen} setIsOpen={setIsOpen}/>
     </div>
   );
-};
+}
 
 export default Dashboard;
-
-
