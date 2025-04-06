@@ -183,7 +183,7 @@ const Dashboard = () => {
               </div>
             )}
 
-            <ControlPanel selected={selected} setSelected={setSelected} />
+            <ControlPanel selected={selected} setSelected={setSelected} setIsOpen={setIsOpen2} />
             <Table setIsOpen={setIsOpen} />
             <CropModal isOpen={isOpen} setIsOpen={setIsOpen} />
             {isOpen2 && <AddModal setIsOpen={setIsOpen2}/> }
