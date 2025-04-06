@@ -1,10 +1,15 @@
 import Row from './Row'
 
-const Table = ({ data, setIsOpen, setCropId, recommendations = [] }) => {
+const Table = ({ data, setIsOpen, setCropId, recommendations = [], filterUnhealthy }) => {
 
   const getLLMData = (cropName) => {
     return recommendations.find((rec) => rec.crop.toLowerCase() === cropName.toLowerCase()) || {};
   }
+
+  // Filter data based on the isHealthy property if filterUnhealthy is true
+  const filteredData = filterUnhealthy
+    ? Object.entries(data).filter(([cropId, cropData]) => !cropData.isHealthy)
+    : Object.entries(data); // Show all data if not filtering for unhealthy crops
 
   return (
     <div className="flex flex-col mx-4 border-1 border-gray-300 rounded-lg">
@@ -22,7 +27,7 @@ const Table = ({ data, setIsOpen, setCropId, recommendations = [] }) => {
       </div>
 
       {/* Rows */}
-      {data ? Object.entries(data).map(([cropId, cropData]) => {
+      {filteredData.length > 0 ? filteredData.map(([cropId, cropData]) => {
         const llmData = getLLMData(cropData.crop);
 
         return (
@@ -44,7 +49,7 @@ const Table = ({ data, setIsOpen, setCropId, recommendations = [] }) => {
         )
       }) : (
         <div className="flex justify-center align-center text-4xl mt-2">
-          No Inventory
+          No Unhealthy Crops Available
         </div>
       )}
     </div>

@@ -26,10 +26,12 @@ const Dashboard = () => {
   const [selected, setSelected] = useState("All");
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
-  const [location, setLocation] = useState("Nairobi");
+  const [location, setLocation] = useState("London");
   const [cityList, setCityList] = useState(["London", "New York", "Paris"]);
   const [cityInput, setCityInput] = useState("");
   const [showCityInput, setShowCityInput] = useState(false);
+
+  const [filterUnhealthy, setFilterUnhealthy] = useState(false); // Track if we want to filter unhealthy crops
 
   const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -109,7 +111,6 @@ const Dashboard = () => {
     <div className="flex flex-col h-[100vh] bg-gradient-to-b from-[#DCEFD8] to-[#F1F9EF]">
       <Navbar />
       
-
       {loading && (
         <div className="absolute inset-0 bg-opacity-50 flex justify-center items-center z-50">
           <CircularProgress size={50} color="primary" />
@@ -133,9 +134,9 @@ const Dashboard = () => {
               <div className="w-2/5">
                 <div className="bg-white p-3 rounded-xl shadow-md border border-dark-green h-50">
                   <h3 className="text-xl font-semibold text-green-900 mb-2">Weather Forecast</h3>
-                  <div className="flex justify-between items-center">
+                  <div className="absolute top-4 right-4 space-x-2">
                     <select
-                      className="border border-gray-300 p-1 rounded-md"
+                      className="border border-gray-300 p-1 rounded-md w-40"
                       value={location}
                       onChange={(e) => setLocation(e.target.value)}
                     >
@@ -148,27 +149,31 @@ const Dashboard = () => {
 
                     <button
                       onClick={() => setShowCityInput(!showCityInput)}
-                      className="text-green-600 font-bold text-sm"
+                      className="text-green-600 font-bold text-sm border border-gray-300 px-2 py-1 rounded-md"
                     >
                       {showCityInput ? "-" : "+"}
                     </button>
                   </div>
 
+                  {/* Popup for adding city */}
                   {showCityInput && (
-                    <div className="absolute right-0 mt-2 p-2 bg-white shadow-md border rounded-md w-40">
-                      <input
-                        type="text"
-                        className="border border-gray-300 p-2 rounded-md w-full"
-                        placeholder="Enter City"
-                        value={cityInput}
-                        onChange={(e) => setCityInput(e.target.value)}
-                      />
-                      <button
-                        className="mt-2 bg-green-600 text-white px-4 py-2 rounded-md"
-                        onClick={handleAddCity}
-                      >
-                        Add City
-                      </button>
+                    <div className="fixed inset-0 bg-opacity-30 border border-dark-green flex justify-center items-center z-50">
+                      <div className="bg-white p-6 rounded-lg border border-dark-green shadow-lg w-80">
+                        <h3 className="text-lg font-semibold text-center mb-4">Add a New City</h3>
+                        <input
+                          type="text"
+                          className="border border-gray-300 p-2 rounded-md w-full mb-4"
+                          placeholder="Enter City"
+                          value={cityInput}
+                          onChange={(e) => setCityInput(e.target.value)}
+                        />
+                        <button
+                          className="w-full bg-green-800 hover:bg-green-900 transition duration-300 text-white p-2 rounded-md"
+                          onClick={handleAddCity}
+                        >
+                          Add City
+                        </button>
+                      </div>
                     </div>
                   )}
 
@@ -217,9 +222,16 @@ const Dashboard = () => {
               setSelected={setSelected}
               setIsOpen={setIsOpen2}
               data={inventoryArray}
+              setFilterUnhealthy={setFilterUnhealthy} // Pass the function to handle filtering
             />
-            <Table data={dbInventory} setIsOpen={setIsOpen} setCropId={setCropId} recommendations={recommendations} />
-            {isOpen && <CropModal data={dbInventory} setIsOpen={setIsOpen} cropId={cropId}/>}
+            <Table 
+              data={dbInventory} 
+              setIsOpen={setIsOpen} 
+              setCropId={setCropId} 
+              recommendations={recommendations} 
+              filterUnhealthy={filterUnhealthy} // Pass the filterUnhealthy state
+            />
+            {isOpen && <CropModal data={dbInventory} setIsOpen={setIsOpen} cropId={cropId} />}
             {isOpen2 && <AddModal setIsOpen={setIsOpen2} />}
           </>
         )}

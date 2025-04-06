@@ -1,32 +1,22 @@
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useEffect, useState } from "react";
 
-const ControlPanel = ({ selected, setSelected, setIsOpen, data }) => {
+const ControlPanel = ({ selected, setSelected, setIsOpen, data, setFilterUnhealthy }) => {
   
-  const [counts, setCounts] = useState({
-    Unhealthy: 0,
-    'High-risk': 0,
-    All: data.length
+  const filteredData = data.filter((item) => {
+    if (selected === 'Unhealthy') {
+      setFilterUnhealthy(true);
+      return item.healthStatus === 'Unhealthy';
+    }
+    setFilterUnhealthy(false);
+    return true; 
   });
 
-  // Update the counts when data changes
-  useEffect(() => {
-    const unhealthyCount = data.filter(item => item.healthStatus === 'Unhealthy').length;
-    const highRiskCount = data.filter(item => item.riskLevel === 'High').length;
-    
-    setCounts({
-      Unhealthy: unhealthyCount,
-      'High-risk': highRiskCount,
-      All: data.length
-    });
-  }, [data]);
-
   const options = [
-    { id: 'All', label: 'All', count: counts.All },
-    { id: 'Unhealthy', label: 'Unhealthy', count: counts.Unhealthy },
-    { id: 'High-risk', label: 'High-risk', count: counts['High-risk'] }
+    { id: 'All', label: 'All'},
+    { id: 'Unhealthy', label: 'Unhealthy'}
   ];
-    
+
   const handleOptionChange = (optionId) => {
     setSelected(optionId);
   };
@@ -43,11 +33,6 @@ const ControlPanel = ({ selected, setSelected, setIsOpen, data }) => {
             onClick={() => handleOptionChange(option.label)}
           >
             <span className="text-sm">{option.label}</span>
-            {option.count !== null && (
-              <span className="ml-2 px-2 py-0.5 text-xs bg-red-200 rounded-full">
-                {option.count}
-              </span>
-            )}
           </button>
         ))}
       </div>
